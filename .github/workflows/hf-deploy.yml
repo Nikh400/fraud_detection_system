@@ -22,14 +22,13 @@ jobs:
       - name: Push Subdirectory to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_USERNAME: ${{ secrets.HF_USERNAME }}
         run: |
           # 1. Setup minimal git config for the bot
           git config --global user.email "github-actions-bot@example.com"
           git config --global user.name "GitHub Actions Bot"
           
           # 2. Add Hugging Face Space as a remote
-          git remote add hf "https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/fraud-detector-api"
+          git remote add hf "https://nikh400:$HF_TOKEN@huggingface.co/spaces/nikh400/fraud-detector-api"
           
           # 3. Cut off the specific backend folder and force push it directly to HF space's main branch
           git subtree split --prefix fraud_detection -b deploy-branch
