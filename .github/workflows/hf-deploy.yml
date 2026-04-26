@@ -1,12 +1,10 @@
 name: Deploy Backend to Hugging Face
 
 on:
-  # This workflow triggers whenever you push code changes to the backend folder
   push:
     branches: [ main ]
     paths:
       - "fraud_detection/**"
-  # Allows you to trigger this workflow manually from GitHub Actions tab
   workflow_dispatch:
 
 jobs:
@@ -15,21 +13,39 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          # Required for git subtree commands to work properly
-          fetch-depth: 0 
 
-      - name: Push Subdirectory to Hugging Face Space
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Hugging Face Hub
+        run: pip install huggingface_hub
+
+      - name: Upload to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # 1. Setup minimal git config for the bot
-          git config --global user.email "github-actions-bot@example.com"
-          git config --global user.name "GitHub Actions Bot"
-          
-          # 2. Add Hugging Face Space as a remote
-          git remote add hf "https://nikh400:$HF_TOKEN@huggingface.co/spaces/nikh400/fraud-detector-api"
-          
-          # 3. Cut off the specific backend folder and force push it directly to HF space's main branch
-          git subtree split --prefix fraud_detection -b deploy-branch
-          git push -f hf deploy-branch:main
+          python -c "
+          import os, sys
+          from huggingface_hub import HfApi
+
+          token = os.environ.get('HF_TOKEN')
+          if not token:
+              print('ERROR: HF_TOKEN is missing! Did you save it as a Repository Secret?')
+              sys.exit(1)
+
+          try:
+              api = HfApi()
+              print('Uploading fraud_detection folder to Hugging Face Spaces...')
+              api.upload_folder(
+                  folder_path='fraud_detection',
+                  repo_id='nikh400/fraud-detector-api',
+                  repo_type='space',
+                  token=token
+              )
+              print('Successfully uploaded!')
+          except Exception as e:
+              print(f'Upload failed: {e}')
+              sys.exit(1)
+          "
