@@ -1,0 +1,36 @@
+name: Deploy Backend to Hugging Face
+
+on:
+  # This workflow triggers whenever you push code changes to the backend folder
+  push:
+    branches: [ main ]
+    paths:
+      - "fraud_detection/**"
+  # Allows you to trigger this workflow manually from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # Required for git subtree commands to work properly
+          fetch-depth: 0 
+
+      - name: Push Subdirectory to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: ${{ secrets.HF_USERNAME }}
+        run: |
+          # 1. Setup minimal git config for the bot
+          git config --global user.email "github-actions-bot@example.com"
+          git config --global user.name "GitHub Actions Bot"
+          
+          # 2. Add Hugging Face Space as a remote
+          git remote add hf "https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/fraud-detector-api"
+          
+          # 3. Cut off the specific backend folder and force push it directly to HF space's main branch
+          git subtree split --prefix fraud_detection -b deploy-branch
+          git push -f hf deploy-branch:main
