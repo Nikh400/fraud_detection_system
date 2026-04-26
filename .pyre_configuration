@@ -1,0 +1,10 @@
+{
+    "source_directories": [
+        "fraud_detection"
+    ],
+    "search_path": [
+        "fraud_detection",
+        "/home/nikhil/fraud_detector/venv/lib/python3.12/site-packages"
+    ],
+    "site_package_search_strategy": "pep561"
+}

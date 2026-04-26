@@ -1,0 +1,9 @@
+{
+    "source_directories": [
+        "fraud_detection"
+    ],
+    "search_path": [
+        "fraud_detection",
+        "venv/lib/python3.12/site-packages"
+    ]
+}

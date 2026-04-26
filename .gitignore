@@ -1,0 +1,24 @@
+# Environment and virtual environments
+venv/
+.env
+
+# MacOS / OS specific
+.DS_Store
+
+# PyCache and logs
+__pycache__/
+*.log
+.mypy_cache/
+
+# Large binaries and trained models
+saved_models/
+*.png
+*.jpg
+*.jpeg
+fraud.db
+*.docx
+
+# Frontend overrides (node_modules is handled in frontend/.gitignore but adding here as a fallback)
+node_modules/
+dist/
+.vscode/

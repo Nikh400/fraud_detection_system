@@ -1,0 +1,9 @@
+[tool.pyre]
+source-directories = ["fraud_detection"]
+search-path = ["fraud_detection", "venv/lib/python3.12/site-packages"]
+
+[tool.pyright]
+include = ["fraud_detection"]
+venvPath = "."
+venv = "venv"
+extraPaths = ["fraud_detection"]
