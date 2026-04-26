@@ -3,8 +3,6 @@ name: Deploy Backend to Hugging Face
 on:
   push:
     branches: [ main ]
-    paths:
-      - "fraud_detection/**"
   workflow_dispatch:
 
 jobs:
@@ -24,7 +22,7 @@ jobs:
 
       - name: Upload to Hugging Face Space
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_TOKEN: \${{ secrets.HF_TOKEN }}
         run: |
           python -c "
           import os, sys
@@ -32,20 +30,23 @@ jobs:
 
           token = os.environ.get('HF_TOKEN')
           if not token:
-              print('ERROR: HF_TOKEN is missing! Did you save it as a Repository Secret?')
+              print('ERROR: HF_TOKEN is missing!')
               sys.exit(1)
 
           try:
               api = HfApi()
-              print('Uploading fraud_detection folder to Hugging Face Spaces...')
+              print('Uploading repository contents to Hugging Face...')
+              # Using '.' ensures it grabs everything in your current directory
               api.upload_folder(
-                  folder_path='fraud_detection',
+                  folder_path='.',
                   repo_id='nikh400/fraud-detector-api',
                   repo_type='space',
-                  token=token
+                  token=token,
+                  path_in_repo=''
               )
               print('Successfully uploaded!')
           except Exception as e:
               print(f'Upload failed: {e}')
               sys.exit(1)
           "
+          
